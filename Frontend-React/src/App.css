@@ -20,3 +20,13 @@
     transform: rotate(360deg);
   }
 }
+
+.to-do-item-toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+}
+
+.to-do-item-toast .toast-body {
+  color:#fff;
+}
