@@ -18,13 +18,12 @@ const App = () => {
   }, [])
 
   const getItems = async () => {
-    getTodoItems()
-      .then((response) => {
-        setItems(response.data)
-      })
-      .catch((error) => {
-        handleOnError(`Failed to load Todo Item list, ${error.message}`)
-      })
+    try {
+      var result = await getTodoItems()
+      setItems(result.data)
+    } catch (error) {
+      handleOnError(`Failed to load Todo Item list, ${error.message}`)
+    }
   }
 
   const handleonItemUpSerted = (message) => {

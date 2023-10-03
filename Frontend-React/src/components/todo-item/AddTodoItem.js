@@ -14,14 +14,13 @@ const AddTodoItem = ({ onItemCreated, onItemCreatedError }) => {
   }
 
   const handleAdd = async () => {
-    createTodoItem({ description, isCompleted: false })
-      .then((response) => {
-        onItemCreated(`New Todo Item "${response.data.description}" added.`)
-        handleClear()
-      })
-      .catch((error) => {
-        onItemCreatedError(`Failed to create Todo item, ${error.message}`)
-      })
+    try {
+      var result = await createTodoItem({ description, isCompleted: false })
+      onItemCreated(`New Todo Item "${result.data.description}" added.`)
+      handleClear()
+    } catch (error) {
+      onItemCreatedError(`Failed to create Todo item, ${error.message}`)
+    }
   }
 
   return (

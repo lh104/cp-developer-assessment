@@ -4,13 +4,12 @@ import { updateTodoItem } from '../../services/TodoItemsService'
 
 const ListTodoItems = ({ items, onItemUpdated, onItemUpdatedError, onRefresh }) => {
   const handleMarkAsComplete = async (todoItem) => {
-    updateTodoItem(todoItem.id, { ...todoItem, isCompleted: true })
-      .then((response) => {
-        onItemUpdated(`Todo Item "${todoItem.description}" marked as completed.`)
-      })
-      .catch((error) => {
-        onItemUpdatedError(`Failed to update Todo item, ${error.message}`)
-      })
+    try {
+      await updateTodoItem(todoItem.id, { ...todoItem, isCompleted: true })
+      onItemUpdated(`Todo Item "${todoItem.description}" marked as completed.`)
+    } catch (error) {
+      onItemUpdatedError(`Failed to update Todo item, ${error.message}`)
+    }
   }
 
   return (
