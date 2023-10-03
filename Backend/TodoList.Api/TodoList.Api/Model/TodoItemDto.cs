@@ -1,8 +1,8 @@
-using System;
+﻿using System;
 
-namespace TodoList.Api
+namespace TodoList.Api.Model
 {
-    public class TodoItem
+    public class TodoItemDto
     {
         public Guid Id { get; set; }
 
