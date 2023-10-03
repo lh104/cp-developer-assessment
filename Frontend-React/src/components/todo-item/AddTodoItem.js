@@ -20,7 +20,6 @@ const AddTodoItem = ({ onItemCreated, onItemCreatedError }) => {
         handleClear()
       })
       .catch((error) => {
-        console.log(`catched`)
         onItemCreatedError(`Failed to create Todo item, ${error.message}`)
       })
   }

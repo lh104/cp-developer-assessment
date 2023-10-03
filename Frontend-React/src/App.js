@@ -36,7 +36,6 @@ const App = () => {
     setToastSetting({ type: 'danger', title: 'Error', message: errorMessage })
   }
 
-  console.log(toastSetting)
   return (
     <div className="App">
       <Container>
