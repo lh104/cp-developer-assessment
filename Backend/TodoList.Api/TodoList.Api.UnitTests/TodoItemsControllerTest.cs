@@ -103,18 +103,49 @@ namespace TodoList.Api.UnitTests
             todoItemServiceMock.Verify( mock => mock.GetOneAsync(new Guid( "cb53a06e-1dbf-4b47-a987-7b47e9f02eb9" )), Times.Once );
         }
 
+        [Fact]
+        public async void Create_ShouldReturnOk_WhenTodoItemCreated() {
+            var todoItem = CreateTodoItem();
+            var todoItemDto = new TodoItemDto() { Description = todoItem.Description };
 
-        //[Fact]
-        //public async void Create_ShouldReturnOk_WhenTodoItemCreated() {
-        //    var todoItem = CreateTodoItem();
-        //    var todoItemDto = new TodoItemDto() { Description = todoItem.Description };
+            todoItemServiceMock.Setup( c => c.CreateAsync( It.IsAny<TodoItem>() ) ).ReturnsAsync( todoItem );
 
-        //    todoItemServiceMock.Setup( c => c.CreateAsync( todoItem ) ).ReturnsAsync( todoItem );
-        //    todoItemServiceMock.CallBase = false;
-        //    var result = await controller.PostTodoItem( todoItemDto );
+            var result = await controller.PostTodoItem( todoItemDto );
 
-        //    Assert.IsType<OkObjectResult>( result );
-        //}
+            Assert.IsType<CreatedAtActionResult>( result );
+        }
+
+        [Fact]
+        public async void Create_ShouldReturnBadRequest_WhenTodoItemHasNoDescription() {
+            var todoItemDto = new TodoItemDto();
+
+            var result = await controller.PostTodoItem( todoItemDto );
+
+            Assert.IsType<BadRequestObjectResult>( result );
+        }
+
+        [Fact]
+        public async void Update_ShouldReturnBadRequest_WhenRouteIdAndEntityIdAreNotTheSame() {
+            var todoItemDto = new TodoItemDto() { Id = new Guid( "cb53a06e-1dbf-4b47-a987-7b47e9f02eb9" ) };
+
+            var result = await controller.PutTodoItem( new Guid( "c8764ab6-6245-11ee-8c99-0242ac120002" ), todoItemDto );
+
+            Assert.IsType<BadRequestResult>( result );
+        }
+
+        [Fact]
+        public async void Update_ShouldReturnNoContent_WhenTodoItemUpdated() {
+            var todoItem = CreateTodoItem();
+            var todoItemDto = new TodoItemDto() {
+                Id = new Guid( "cb53a06e-1dbf-4b47-a987-7b47e9f02eb9" ),
+                Description = "This is my first Todo Item",
+                IsCompleted = false
+            };
+            todoItemServiceMock.Setup( c => c.UpdateAsync( It.IsAny<TodoItem>() ) ).ReturnsAsync( todoItem );
+            var result = await controller.PutTodoItem( new Guid( "cb53a06e-1dbf-4b47-a987-7b47e9f02eb9" ), todoItemDto );
+
+            Assert.IsType<NoContentResult>( result );
+        }
 
         private List<TodoItem> CreateTodoItemList() {
             return new List<TodoItem> {
