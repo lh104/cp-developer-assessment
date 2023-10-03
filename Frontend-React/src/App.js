@@ -7,7 +7,7 @@ import Description from './components/shared/Description'
 import AddTodoItem from './components/todo-item/AddTodoItem'
 import ListTodoItems from './components/todo-item/ListTodoItems'
 import ToastWrapper from './components/shared/ToastWrapper'
-import { getTodoItems } from './services/TodoItemsService'
+import { getTodoItems, updateTodoItem, createTodoItem } from './services/TodoItemsService'
 
 const App = () => {
   const [toastSetting, setToastSetting] = useState(undefined)
@@ -22,17 +22,36 @@ const App = () => {
       var result = await getTodoItems()
       setItems(result.data)
     } catch (error) {
-      handleOnError(`Failed to load Todo Item list, ${error.message}`)
+      setToastSetting({ type: 'danger', title: 'Error', message: `Failed to load Todo Item list, ${error.message}` })
     }
   }
 
-  const handleonItemUpSerted = (message) => {
-    setToastSetting({ type: 'success', title: 'Success', message })
-    getItems()
+  const handleOnItemCreated = async (todoItem) => {
+    try {
+      var result = await createTodoItem(todoItem)
+      getItems()
+      setToastSetting({
+        type: 'success',
+        title: 'Success',
+        message: `New Todo Item "${result.data.description}" added.`,
+      })
+    } catch (error) {
+      setToastSetting({ type: 'danger', title: 'Error', message: `Failed to create Todo item, ${error.message}` })
+    }
   }
 
-  const handleOnError = (errorMessage) => {
-    setToastSetting({ type: 'danger', title: 'Error', message: errorMessage })
+  const handleOnItemUpdated = async (todoItem) => {
+    try {
+      await updateTodoItem(todoItem.id, todoItem)
+      getItems()
+      setToastSetting({
+        type: 'success',
+        title: 'Success',
+        message: `Todo Item "${todoItem.description}" marked as completed.`,
+      })
+    } catch (error) {
+      setToastSetting({ type: 'danger', title: 'Error', message: `Failed to update Todo item, ${error.message}` })
+    }
   }
 
   return (
@@ -40,14 +59,9 @@ const App = () => {
       <Container>
         <Header />
         <Description />
-        <AddTodoItem onItemCreated={handleonItemUpSerted} onItemCreatedError={handleOnError}></AddTodoItem>
+        <AddTodoItem onItemCreated={handleOnItemCreated}></AddTodoItem>
         <br />
-        <ListTodoItems
-          items={items}
-          onItemUpdated={handleonItemUpSerted}
-          onItemUpdatedError={handleOnError}
-          onRefresh={getItems}
-        ></ListTodoItems>
+        <ListTodoItems items={items} onItemUpdated={handleOnItemUpdated} onRefresh={getItems}></ListTodoItems>
       </Container>
       <Footer />
       {toastSetting && (

@@ -1,15 +1,9 @@
 import React from 'react'
 import { Button, Table } from 'react-bootstrap'
-import { updateTodoItem } from '../../services/TodoItemsService'
 
-const ListTodoItems = ({ items, onItemUpdated, onItemUpdatedError, onRefresh }) => {
+const ListTodoItems = ({ items, onItemUpdated, onRefresh }) => {
   const handleMarkAsComplete = async (todoItem) => {
-    try {
-      await updateTodoItem(todoItem.id, { ...todoItem, isCompleted: true })
-      onItemUpdated(`Todo Item "${todoItem.description}" marked as completed.`)
-    } catch (error) {
-      onItemUpdatedError(`Failed to update Todo item, ${error.message}`)
-    }
+    onItemUpdated({ ...todoItem, isCompleted: true })
   }
 
   return (
@@ -31,7 +25,7 @@ const ListTodoItems = ({ items, onItemUpdated, onItemUpdatedError, onRefresh }) 
         </thead>
         <tbody>
           {items?.map((item) => (
-            <tr key={item.id}>
+            <tr key={item.id} data-testid="todoItems">
               <td>{item.id}</td>
               <td>{item.description}</td>
               <td>
